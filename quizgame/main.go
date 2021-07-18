@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -29,6 +30,10 @@ func main() {
 	}
 
 	questions := parseQuestions(file)
+
+	fmt.Println("Press enter to start the quiz")
+	fmt.Scanln()
+
 	doQuestions(questions, *timelimit)
 
 	fmt.Printf("Game over! Your score was %d/%d", score, len(questions))
@@ -74,7 +79,7 @@ func doQuestions(questions []Question, timelimit int) {
 			return
 		case input := <-answerChannel:
 			//check against answer
-			if input == question.a {
+			if strings.TrimSpace(input) == question.a {
 				score++
 			}
 		}
