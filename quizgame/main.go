@@ -8,12 +8,19 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 )
 
-var score, total int
+var score int
+
+type Question = struct {
+	q string
+	a string
+}
 
 func main() {
 	filename := flag.String("filename", "problems", "The name of the file where the questions are located")
+	timelimit := flag.Int("timelimit", 30, "time limit to complete the quiz in")
 	flag.Parse()
 
 	file, err := os.Open(*filename + ".csv")
@@ -21,36 +28,55 @@ func main() {
 		log.Fatal(err)
 	}
 
+	questions := parseQuestions(file)
+	doQuestions(questions, *timelimit)
+
+	fmt.Printf("Game over! Your score was %d/%d", score, len(questions))
+
+}
+
+// parseQuestions parses a csv file into a questions array
+func parseQuestions(file io.Reader) []Question {
 	r := csv.NewReader(file)
+	var questions []Question
 
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
-			fmt.Printf("Game over! Your score was %d/%d", score, total)
 			break
 		}
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		doQuestion(record)
+		questions = append(questions, Question{record[0], record[1]})
+
 	}
 
+	return questions
 }
 
-//doQuestion asks the user a question using the given record
-func doQuestion(record []string) {
+//doQuestion asks the user the quiz questions
+func doQuestions(questions []Question, timelimit int) {
+	timer := time.NewTimer(time.Duration(timelimit) * time.Second)
+	answerChannel := make(chan string)
 
-	fmt.Println(record[0])
+	for _, question := range questions {
+		go func() {
+			fmt.Println(question.q)
+			var input string
+			fmt.Scanln(&input)
+			answerChannel <- input
+		}()
 
-	//wait for user input
-	var input string
-	fmt.Scanln(&input)
-
-	//check against answer
-	if input == record[1] {
-		score++
+		select {
+		case <-timer.C:
+			return
+		case input := <-answerChannel:
+			//check against answer
+			if input == question.a {
+				score++
+			}
+		}
 	}
-
-	total++
 }
