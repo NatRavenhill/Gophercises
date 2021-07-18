@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -21,7 +22,8 @@ type Question = struct {
 
 func main() {
 	filename := flag.String("filename", "problems", "The name of the file where the questions are located")
-	timelimit := flag.Int("timelimit", 30, "time limit to complete the quiz in")
+	timelimit := flag.Int("timelimit", 30, "Time limit to complete the quiz in")
+	shuffle := flag.Bool("shuffle", false, "Should we shuffle the questions?")
 	flag.Parse()
 
 	file, err := os.Open(*filename + ".csv")
@@ -30,6 +32,11 @@ func main() {
 	}
 
 	questions := parseQuestions(file)
+
+	if *shuffle {
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(len(questions), func(i, j int) { questions[i], questions[j] = questions[j], questions[i] })
+	}
 
 	fmt.Println("Press enter to start the quiz")
 	fmt.Scanln()
