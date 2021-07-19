@@ -26,12 +26,7 @@ func main() {
 	shuffle := flag.Bool("shuffle", false, "Should we shuffle the questions?")
 	flag.Parse()
 
-	file, err := os.Open(*filename + ".csv")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	questions := parseQuestions(file)
+	questions := parseQuestions(*filename)
 
 	if *shuffle {
 		rand.Seed(time.Now().UnixNano())
@@ -48,7 +43,12 @@ func main() {
 }
 
 // parseQuestions parses a csv file into a questions array
-func parseQuestions(file io.Reader) []Question {
+func parseQuestions(filename string) []Question {
+	file, err := os.Open(filename + ".csv")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	r := csv.NewReader(file)
 	var questions []Question
 
