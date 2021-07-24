@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	chapters, err := story.DecodeJSON()
+	chapters, err := story.DecodeJSON("gopher.json")
 	if err != nil {
 		log.Fatal(err)
 	}

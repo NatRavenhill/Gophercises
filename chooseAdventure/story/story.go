@@ -20,8 +20,8 @@ type Chapter struct {
 }
 
 //DecodeJSON decodes the json file into a map of chapters
-func DecodeJSON() (map[string]Chapter, error) {
-	content, err := ioutil.ReadFile("gopher.json")
+func DecodeJSON(filename string) (map[string]Chapter, error) {
+	content, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -30,10 +30,10 @@ func DecodeJSON() (map[string]Chapter, error) {
 	return chapters, err
 }
 
-//StartGame sets up the template and server for the game
-func StartGame(chapters map[string]Chapter) {
-	tmpl := template.Must(template.ParseFiles("story.html"))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+//BuildTemplate sets up the http template
+func buildTemplate(chapters map[string]Chapter, filename string) http.HandlerFunc {
+	tmpl := template.Must(template.ParseFiles(filename))
+	return func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
 		if len(path) == 1 {
 			path = "/intro"
@@ -45,7 +45,12 @@ func StartGame(chapters map[string]Chapter) {
 		} else {
 			fmt.Fprintln(w, "Chapter not found!")
 		}
-	})
+	}
+}
+
+//StartGame sets up the template and server for the game
+func StartGame(chapters map[string]Chapter) {
+	http.HandleFunc("/", buildTemplate(chapters, "story.html"))
 	http.ListenAndServe(":80", nil)
 
 }
