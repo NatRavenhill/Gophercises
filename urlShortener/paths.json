@@ -1,0 +1,10 @@
+[
+    {
+        "path":"/quiz",
+        "url":"https://github.com/gophercises/quiz"
+    },
+    {
+        "path":"/quiz-final",
+        "url":"https://github.com/gophercises/quiz/tree/master/students/hellosputnik"   
+    }
+]

@@ -46,7 +46,7 @@ func TestMapHandler(t *testing.T) {
 
 }
 
-//TestMap Handler tests the YAML handler method redirects
+//TestYAMLHandler tests the YAML handler method redirects
 func TestYAMLHandler(t *testing.T) {
 	var tests = []struct {
 		path   string
@@ -63,6 +63,35 @@ func TestYAMLHandler(t *testing.T) {
 		}
 
 		testfunc, err := YAMLHandler(content, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		code := makeRequest(test.path, testfunc)
+		if code != test.status {
+			t.Fatalf("Got %v, expected %v", code, test.status)
+		}
+
+	}
+
+}
+
+//TestJSONHandler tests the JSON handler method redirects
+func TestJSONHandler(t *testing.T) {
+	var tests = []struct {
+		path   string
+		status int
+	}{
+		{"/quiz", http.StatusFound},
+		{"/abc", http.StatusOK},
+	}
+	for _, test := range tests {
+		content, err := ioutil.ReadFile("./../paths.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		testfunc, err := JSONHandler(content, nil)
 		if err != nil {
 			t.Fatal(err)
 		}

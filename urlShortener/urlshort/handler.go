@@ -1,6 +1,7 @@
 package urlshort
 
 import (
+	"encoding/json"
 	"net/http"
 
 	yaml "gopkg.in/yaml.v2"
@@ -44,20 +45,38 @@ type Link struct {
 //
 // See MapHandler to create a similar http.HandlerFunc via
 // a mapping of paths to urls.
-func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-	//parse yaml
+func YAMLHandler(content []byte, fallback http.Handler) (http.HandlerFunc, error) {
 	var links []Link
 
-	err := yaml.Unmarshal(yml, &links)
+	err := yaml.Unmarshal(content, &links)
 	if err != nil {
 		return nil, err
 	}
 
+	return MapHandler(createPaths(links), fallback), nil
+}
+
+//JSONHandler parses the provided JSON file and then returns
+// an http.HandlerFunc (which also implements http.Handler)
+// that will attempt to map any paths to their corresponding
+// URL. If the path is not provided in the YAML, then the
+// fallback http.Handler will be called instead.
+func JSONHandler(content []byte, fallback http.Handler) (http.HandlerFunc, error) {
+	var links []Link
+	err := json.Unmarshal(content, &links)
+	if err != nil {
+		return nil, err
+	}
+
+	return MapHandler(createPaths(links), fallback), nil
+}
+
+//Creates the map from a link array
+func createPaths(links []Link) map[string]string {
 	pathsToUrls := make(map[string]string)
 	for _, val := range links {
 		pathsToUrls[val.Path] = val.Url
 	}
 
-	return MapHandler(pathsToUrls, fallback), nil
-
+	return pathsToUrls
 }
