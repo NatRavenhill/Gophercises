@@ -1,22 +1,22 @@
 package main
 
 import (
-	"fmt"
+	"flag"
 	"links"
 	"log"
 	"net/http"
+
+	"smap"
 )
 
 func main() {
-	//get the webpage
-	resp, err := http.Get("http://calhoun.io")
+	url := flag.String("url", "calhoun.io", "Url to get sitemap for")
+
+	resp, err := http.Get("http://" + *url)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	links := links.ParseContent(resp.Body)
-	for _, link := range links {
-		fmt.Println(link)
-	}
-
+	result := links.ParseContent(resp.Body)
+	smap.WriteXML(*url, result)
 }
