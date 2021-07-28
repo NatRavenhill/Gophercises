@@ -5,86 +5,18 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
-	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
-)
-
-type Link = struct {
-	Href string
-	Text string
-}
-
-var (
-	Links     []Link
-	validTags = []atom.Atom{atom.Strong, atom.Span, atom.B, atom.I}
+	"links"
 )
 
 func main() {
-	tree := parseFile("ex1.html")
-	extractLinks(tree)
+	content, err := os.Open("ex1.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	links := links.ParseContent(content)
 
-	for _, val := range Links {
+	for _, val := range links {
 		fmt.Println(val)
 	}
-}
-
-//ParseFile parses a given file into a html tree
-func parseFile(filename string) *html.Node {
-	content, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tree, err := html.Parse(content)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return tree
-}
-
-//ExtractLinks traverses the tree and extracts links
-func extractLinks(node *html.Node) {
-	if node.Type == html.ElementNode && node.DataAtom == atom.A {
-		for _, a := range node.Attr {
-			if a.Key == "href" && node.FirstChild != nil {
-				link := Link{a.Val, buildText(node)}
-				Links = append(Links, link)
-				break
-			}
-		}
-	}
-	for c := node.FirstChild; c != nil; c = c.NextSibling {
-		extractLinks(c)
-	}
-}
-
-//BuildText builds the text value from the a tag's content
-func buildText(node *html.Node) string {
-	var result string
-	for c := node.FirstChild; c != nil; c = c.NextSibling {
-		if c.Type == html.TextNode {
-			result += strings.TrimSpace(c.Data)
-		}
-		if c.Type == html.ElementNode && containsTag(c.DataAtom) {
-			toAdd := buildText(c)
-			if len(toAdd) > 0 {
-				result += " " + toAdd
-			}
-		}
-	}
-	return result
-}
-
-//ContainsTag checks if the given tag is in the valid tags
-func containsTag(tag atom.Atom) bool {
-	for _, val := range validTags {
-		if val == tag {
-			return true
-		}
-	}
-
-	return false
 }

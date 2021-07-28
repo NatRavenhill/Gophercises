@@ -1,6 +1,8 @@
-package main
+package links
 
 import (
+	"log"
+	"os"
 	"testing"
 
 	"golang.org/x/net/html/atom"
@@ -19,13 +21,16 @@ func TestExtractLinks(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		Links = []Link{}
-		tree := parseFile(test.filename)
-		extractLinks(tree)
+		content, err := os.Open("../" + test.filename)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		for i := 0; i < len(Links); i++ {
-			if Links[i] != test.expectedResult[i] {
-				t.Fatalf("Got %v, expected %v", Links[i], test.expectedResult[i])
+		links := ParseContent(content)
+
+		for i := 0; i < len(links); i++ {
+			if links[i] != test.expectedResult[i] {
+				t.Fatalf("Got %v, expected %v", links[i], test.expectedResult[i])
 			}
 		}
 
