@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"golang.org/x/net/html/atom"
 )
 
 //Tests extracting links works correctly for the given files
@@ -27,5 +29,24 @@ func TestExtractLinks(t *testing.T) {
 			}
 		}
 
+	}
+}
+
+//TestContainsTag tests that containsTag only returns true for valid tags
+func TestContainsTag(t *testing.T) {
+	var tests = []struct {
+		tag            atom.Atom
+		expectedResult bool
+	}{
+		{atom.Span, true},
+		{atom.Class, false},
+	}
+
+	for _, test := range tests {
+		result := containsTag(test.tag)
+
+		if result != test.expectedResult {
+			t.Fatalf("Got %v, expected %v", result, test.expectedResult)
+		}
 	}
 }

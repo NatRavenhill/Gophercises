@@ -16,7 +16,10 @@ type Link = struct {
 	Text string
 }
 
-var Links []Link
+var (
+	Links     []Link
+	validTags = []atom.Atom{atom.Strong, atom.Span, atom.B, atom.I}
+)
 
 func main() {
 	tree := parseFile("ex1.html")
@@ -65,7 +68,7 @@ func buildText(node *html.Node) string {
 		if c.Type == html.TextNode {
 			result += strings.TrimSpace(c.Data)
 		}
-		if c.Type == html.ElementNode && c.DataAtom == atom.Strong {
+		if c.Type == html.ElementNode && containsTag(c.DataAtom) {
 			toAdd := buildText(c)
 			if len(toAdd) > 0 {
 				result += " " + toAdd
@@ -73,4 +76,15 @@ func buildText(node *html.Node) string {
 		}
 	}
 	return result
+}
+
+//ContainsTag checks if the given tag is in the valid tags
+func containsTag(tag atom.Atom) bool {
+	for _, val := range validTags {
+		if val == tag {
+			return true
+		}
+	}
+
+	return false
 }
