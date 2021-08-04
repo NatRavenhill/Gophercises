@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
-	url := flag.String("url", "http://calhoun.io", "Url to get sitemap for")
-	result := smap.CollectLinks(*url)
+	url := flag.String("url", "https://calhoun.io", "Url to get sitemap for")
+	maxDepth := flag.Int("maxDepth", 3, "Maximum depth of the search")
+
+	result := smap.DoURLs(*url, *maxDepth)
 	smap.WriteXML(*url, result)
 }
