@@ -21,6 +21,7 @@ type urlSet struct {
 var baseUrl string
 var maxDepth int
 
+//DoURLS does the link collection for the initial URL
 func DoURLs(url string, depth int) map[string]bool {
 	baseUrl = url
 	maxDepth = depth
