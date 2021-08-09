@@ -59,7 +59,7 @@ func CollectLinks(url string, result map[string]bool, depth int) map[string]bool
 }
 
 //WriteXML converts a slice of links into an XML file
-func WriteXML(domain string, results map[string]bool) {
+func WriteXML(results map[string]bool) {
 	urls := new(urlSet)
 	urls.Xmlns = "http://www.sitemaps.org/schemas/sitemap/0.9"
 	for link := range results {

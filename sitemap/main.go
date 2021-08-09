@@ -12,5 +12,5 @@ func main() {
 	flag.Parse()
 
 	result := smap.DoURLs(*url, *maxDepth)
-	smap.WriteXML(*url, result)
+	smap.WriteXML(result)
 }
