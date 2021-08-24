@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"caesarCipher"
 	"camelcase"
 )
 
@@ -24,6 +25,8 @@ func main() {
 		result := camelcase.Camelcase(s)
 
 		fmt.Printf("%d\n", result)
+	case "caesarCipher":
+		caesarCipher.ReadCaesarFile()
 	}
 
 }
