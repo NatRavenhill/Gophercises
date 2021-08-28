@@ -2,11 +2,17 @@ package main
 
 import (
 	"cli/cmd"
+	"cli/database"
 
 	"github.com/spf13/cobra"
 )
 
 func main() {
+	SetupCLI()
+	database.SetupDB()
+}
+
+func SetupCLI() {
 	var rootCmd = &cobra.Command{
 		Use:   "task",
 		Short: "task is a CLI for managing your TODOs.",
