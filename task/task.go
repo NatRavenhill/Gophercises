@@ -8,13 +8,12 @@ import (
 )
 
 func main() {
-	SetupCLI()
+	//SetupCLI()
 
 	//database testing
 	database.SetupDB()
 	database.AddEntry("placeholder text")
-	database.ShowEntries()
-	database.DeleteEntry("1")
+	database.AddEntry("second placeholder text")
 	database.ShowEntries()
 }
 
