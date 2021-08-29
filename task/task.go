@@ -9,7 +9,13 @@ import (
 
 func main() {
 	SetupCLI()
+
+	//database testing
 	database.SetupDB()
+	database.AddEntry("placeholder text")
+	database.ShowEntries()
+	database.DeleteEntry("1")
+	database.ShowEntries()
 }
 
 func SetupCLI() {
