@@ -34,29 +34,34 @@ func SetupDB() {
 	})
 }
 
-func AddEntry(task string) {
+func AddTask(task string) {
 	db.Update(func(t *bolt.Tx) error {
 		bucket := GetTasksBucket(t)
 		total := bucket.Stats().KeyN
 		bucket.Put([]byte(fmt.Sprintf("%d", total+1)), []byte(task))
+
+		fmt.Printf("Added \"%s\" to your task list.", task)
 		return nil
 	})
 }
 
-func ShowEntries() {
+func ShowTasks() {
 	db.View(func(t *bolt.Tx) error {
 		bucket := GetTasksBucket(t)
 		bucket.ForEach(func(k, v []byte) error {
-			fmt.Println(string(k), string(v))
+			fmt.Printf("%s. %s \n", string(k), string(v))
 			return nil
 		})
 		return nil
 	})
 }
 
-func DeleteEntry(key string) {
+func CompleteTask(key string) {
+	var value []byte
 	err := db.Update(func(t *bolt.Tx) error {
 		bucket := GetTasksBucket(t)
+		value = bucket.Get([]byte(key))
+
 		err := bucket.Delete([]byte(key))
 		if err != nil {
 			log.Fatal(err)
@@ -66,4 +71,7 @@ func DeleteEntry(key string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Printf("You have completed the \"%s\" task.\n", value)
+
 }

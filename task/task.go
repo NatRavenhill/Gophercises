@@ -8,13 +8,8 @@ import (
 )
 
 func main() {
-	//SetupCLI()
-
-	//database testing
 	database.SetupDB()
-	database.AddEntry("placeholder text")
-	database.AddEntry("second placeholder text")
-	database.ShowEntries()
+	SetupCLI()
 }
 
 func SetupCLI() {
