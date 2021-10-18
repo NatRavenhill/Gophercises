@@ -17,9 +17,9 @@ func GetTasksBucket(t *bolt.Tx) *bolt.Bucket {
 	return bucket
 }
 
-func SetupDB() {
+func SetupDB(path string) {
 	var err error
-	db, err = bolt.Open("my.db", 0666, nil)
+	db, err = bolt.Open(path, 0666, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

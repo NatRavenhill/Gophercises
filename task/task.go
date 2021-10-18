@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	database.SetupDB()
+	database.SetupDB("my.db")
 	SetupCLI()
 }
 
