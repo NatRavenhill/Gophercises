@@ -1,7 +1,6 @@
 package database
 
 import (
-	"bytes"
 	"io/ioutil"
 	"testing"
 
@@ -23,17 +22,10 @@ func TestGetTasksBucket(t *testing.T) {
 	})
 }
 
-func TestAddTask(t *testing.T) {
-	db.View(func(tx *bolt.Tx) error {
-		AddTask("test task")
-		bucket := GetTasksBucket(tx)
-		actualValue := bucket.Get([]byte("1"))
+func TestShowTasks(t *testing.T) {
+	ShowTasks()
+}
 
-		if !bytes.Equal(actualValue, []byte("test task")) {
-			t.Fatalf("Got %s, expected test task", actualValue)
-		}
-
-		return nil
-	})
-
+func TestCompleteTask(t *testing.T) {
+	CompleteTask("test")
 }
